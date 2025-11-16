@@ -1,3 +1,6 @@
+import conversions.CelsiusToFahrenheitConverter;
+import conversions.CelsiusToKelvinConverter;
+import conversions.FahrenheitToCelsiusConverter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,17 +28,17 @@ public class TemperatureConversionTest {
 
     @Test
     public void testCelsiusToFahrenheit() {
-        assertEquals(212, TempConvProgramRefactored.celsiusToFahrenheit(100), DELTA);
+        assertEquals(212, new CelsiusToFahrenheitConverter().convert(100), DELTA);
     }
 
     @Test
     public void testFahrenheitToCelsius() {
-        assertEquals(295, TempConvProgramRefactored.fahrenheitToCelsius(563), DELTA);
+        assertEquals(295, new FahrenheitToCelsiusConverter().convert(563), DELTA);
     }
 
     @Test
     public void testCelsiusToKelvin() {
-        assertEquals(473.15, TempConvProgramRefactored.celsiusToKelvin(200), DELTA);
+        assertEquals(473.15, new CelsiusToKelvinConverter().convert(200), DELTA);
     }
 
     @Test

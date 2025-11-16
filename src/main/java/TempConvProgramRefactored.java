@@ -1,24 +1,27 @@
+import conversions.CelsiusToFahrenheitConverter;
+import conversions.CelsiusToKelvinConverter;
+import conversions.FahrenheitToCelsiusConverter;
+import conversions.TemperatureConverter;
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class TempConvProgramRefactored {
 
-    public static double celsiusToFahrenheit(double celsius){
-        return celsius*9/5+32;
-    }
-    public static double fahrenheitToCelsius(double fahrenheit) {
-        return (fahrenheit-32)*5/9;
-
-    }
-    public static double celsiusToKelvin(double celsius) {
-        return celsius+273.15;
-    }
+    // List of converters to display to the user
+    private final static TemperatureConverter[] MENU = {
+            new CelsiusToFahrenheitConverter(),
+            new FahrenheitToCelsiusConverter(),
+            new CelsiusToKelvinConverter()
+    };
+    private static final int instructionLength = MENU.length + 1;
 
     public static void printMenu(){
-        System.out.println("1 convert Celsius to Fahrenheit");
-        System.out.println("2 convert Fahrenheit to Celsius");
-        System.out.println("3 convert Celsius to Kelvin");
-        System.out.println("4 exit the program");
+        System.out.println("Provide an integer to choose from the list below: ");
+        for(int i = 0; i < MENU.length; i++) {
+            System.out.printf("%s - %s%n", i + 1, MENU[i].getDescription()); // Add each converter
+        }
+        System.out.printf("%s - %s%n", instructionLength, "Exit the program"); // Include the exit instruction after
     }
 
     // Provides double value input reading from the user with error handling built-in.
@@ -26,7 +29,7 @@ public class TempConvProgramRefactored {
         Double input = null;
 
         while (input == null) {
-            System.out.printf("Please provide your %s value:", inputRequired);
+            System.out.printf("Please provide your %s value:%n", inputRequired);
             try {
                 input = scanner.nextDouble();
             } catch (InputMismatchException exception) {
@@ -41,39 +44,30 @@ public class TempConvProgramRefactored {
         Scanner inputScanner = new Scanner(System.in);
         System.out.println("-- Temperature Conversion App -------");
         System.out.println("Welcome!");
-        program: while(true){
+        while(true){
             printMenu();
             int input;
 
             try {
                 input = inputScanner.nextInt();
             } catch (InputMismatchException exception) {
-                System.out.println("Please provide an integer value.");
+                System.out.println("Not a valid integer value!");
                 inputScanner.next(); // Remove the invalid input from the scanner.
                 continue;
             }
-            double temperature;
 
-            switch (input) {
-                case 1:
-                    temperature = getConversionInput(inputScanner, "celsius");
-                    System.out.printf("%s celsius is %s fahrenheit%n", temperature, celsiusToFahrenheit(temperature));
-                    break;
-                case 2:
-                    temperature = getConversionInput(inputScanner, "fahrenheit");
-                    System.out.printf("%s fahrenheit is %s celsius%n", temperature, fahrenheitToCelsius(temperature));
-                    break;
-                case 3:
-                    temperature = getConversionInput(inputScanner, "celsius");
-                    System.out.printf("%s celsius is %s kelvin%n", temperature, celsiusToKelvin(temperature));
-                    break;
-                case 4:
-                    System.out.println("Exiting the program...");
-                    break program;
-                default:
-                    System.out.println("Input not found, try another one!");
-                    break;
+            if(input == instructionLength) {
+                System.out.println("Exiting the program...");
+                break;
+            } else if(input > instructionLength || input < 1) {
+                System.out.println("Input not found!");
+                continue;
             }
+
+            TemperatureConverter converter = MENU[input + 1];
+            double temperature = getConversionInput(inputScanner, converter.getConvertsFrom().name().toLowerCase());
+            System.out.printf("%s %s converts to %s %s%n", temperature, converter.getConvertsFrom(),
+                    converter.convert(temperature), converter.getConvertsTo());
 
         }
         inputScanner.close();
